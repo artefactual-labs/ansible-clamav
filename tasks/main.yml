@@ -1,0 +1,24 @@
+---
+# tasks file for ansible-clamav
+
+- name: "Include ubuntu tasks"
+  include: "ubuntu.yml"
+  static: "no"
+  when:
+    - ansible_distribution == "Ubuntu"
+
+- name: "Include RedHat/CentOS tasks"
+  include: "redhat.yml"
+  static: "no"
+  when:
+    - ansible_os_family == "RedHat"
+
+- name: "Pause, give some time for service to get up"
+  pause:
+    seconds: 10
+
+- name: "check clamdscan is working"
+  command: "clamdscan /bin/sh"
+
+
+
