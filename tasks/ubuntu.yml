@@ -15,6 +15,24 @@
     - "clamav"
     - "clamav-daemon"
 
+- name: "Configure clamav MaxFileSize"
+  lineinfile:
+     path: "/etc/clamav/clamd.conf"
+     regexp: "^MaxFileSize "
+     line: "MaxFileSize {{ CLAMAV_MAX_FILE_SIZE }}"
+
+- name: "Configure clamav StreamMaxLength"
+  lineinfile:
+     path: "/etc/clamav/clamd.conf"
+     regexp: "^StreamMaxLength "
+     line: "StreamMaxLength {{ CLAMAV_MAX_STREAM_LENGTH }}"
+
+- name: "Configure clamav MaxScanSize"
+  lineinfile:
+     path: "/etc/clamav/clamd.conf"
+     regexp: "^MaxScanSize "
+     line: "MaxScanSize {{ CLAMAV_MAX_SCAN_SIZE }}"
+
 - name: "Include download-sigs.yml"
   include: "download-sigs.yml"
 
