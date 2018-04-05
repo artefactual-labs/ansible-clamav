@@ -27,6 +27,25 @@
     - "clamav-scanner-systemd"
     - "clamav-server-systemd"
 
+# If CLAMAV_SOCKET_TYPE is not defined, use tcp option
+- set_fact:
+    CLAMAV_SOCKET_TYPE: "tcp"
+  when:  CLAMAV_SOCKET_TYPE is not defined
+
+- name: "SELinux enable antivirus_can_scan_system"
+  seboolean:
+    name: antivirus_can_scan_system
+    state: yes
+    persistent: yes
+  when: ansible_selinux.status == "enabled"
+
+- name: "SELinux enable clamd_use_jit"
+  seboolean:
+    name: clamd_use_jit
+    state: yes
+    persistent: yes
+  when: ansible_selinux.status == "enabled"
+
 - name: "Config /etc/freshclam.conf from template"
   template:
     src: "etc/freshclam.conf.j2"
@@ -54,9 +73,17 @@
     dest: "/etc/clamd.conf"
     state: "link"
 
-- name: "Enable and start services"
+- name: "Create tmpfiles custom socket directory"
+  shell: "echo 'd /var/run/clamav 0755 clamscan clamscan' > /etc/tmpfiles.d/clamd.scam.archivematica.conf"
+  when: CLAMAV_SOCKET_TYPE ==  'file'
+
+- name: "Run systemd-tmpfiles to create custom socket directory"
+  shell: "systemd-tmpfiles --create /etc/tmpfiles.d/clamd.scam.archivematica.conf"
+  when: CLAMAV_SOCKET_TYPE ==  'file'
+
+- name: "Enable and restart services"
   service:
     name: "clamd@scan"
-    state: "started"
+    state: "restarted"
     enabled: "yes"
 
