@@ -7,6 +7,68 @@
   with_items: 
     - "git"
 
+- name: "Check if clamav-daemon package was installed"
+  shell: dpkg-query -s clamav-daemon | grep -Eq "install ok installed"
+  register: dpkg_check_clamav_daemon
+  check_mode: no
+  ignore_errors: yes
+  changed_when: no
+
+# If CLAMAV_SOCKET_TYPE is not defined, use file option
+- set_fact:
+    CLAMAV_SOCKET_TYPE: "file"
+  when:  CLAMAV_SOCKET_TYPE is not defined
+
+- set_fact:
+    clamav_daemon_already_installed: true
+  when:  dpkg_check_clamav_daemon.rc == 0
+
+# Clamav-daemon already installed block
+- block:
+
+   # Check if clamav is running with file or tcp socket
+   - name: "Check if clamav was installed with file or tcp socket"
+     command: grep -Eq "^LocalSocket\ " /etc/clamav/clamd.conf
+     register: clamavunixsocket
+     check_mode: no
+     ignore_errors: yes
+     changed_when: no
+
+   - set_fact:
+       clamav_uses_file_socket: true
+     when: clamavunixsocket is defined and ( clamavunixsocket.rc == 0 )
+
+   # Purge clamav-daemon if was installed and socket type will change
+   - name: "Purge clamav-daemon"
+     apt:
+       name: clamav-daemon
+       purge: yes
+       state: absent
+       force: yes
+     when: 
+       - clamav_daemon_already_installed is defined
+       - CLAMAV_SOCKET_TYPE !=  'tcp' and clamav_uses_file_socket is not defined or clamav_daemon_already_installed is defined and CLAMAV_SOCKET_TYPE == 'tcp' and clamav_uses_file_socket is defined
+  when: clamav_daemon_already_installed is defined
+
+# Set debconf when installing clamav-daemon
+- name: "Configure debconf to use the tcp socket"
+  shell: "{{ item }}"
+  with_items:
+    - "echo 'clamav-daemon clamav-daemon/TcpOrLocal select TCP' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TcpOrLocal seen' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TCPAddr string {{ CLAMAV_TCP_ADDR }}' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TCPAddr seen' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TCPSocket string {{ CLAMAV_TCP_PORT }}' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TCPSocket seen' | debconf-set-selections"
+  when: CLAMAV_SOCKET_TYPE == 'tcp'
+
+- name: "Configure debconf to use the unix socket"
+  shell: "{{ item }}"
+  with_items:
+    - "echo 'clamav-daemon clamav-daemon/TcpOrLocal select UNIX' | debconf-set-selections"
+    - "echo 'clamav-daemon clamav-daemon/TcpOrLocal seen' | debconf-set-selections"
+  when: CLAMAV_SOCKET_TYPE != 'tcp'
+
 - name: "Install clamav packages (Ubuntu)"
   apt:
     name: "{{ item }}"
@@ -39,7 +101,7 @@
 - name: "Enable services"
   service:
     name: "{{ item }}"
-    state: "started"
+    state: "restarted"
     enabled: "yes"
   with_items:
     - "clamav-daemon"

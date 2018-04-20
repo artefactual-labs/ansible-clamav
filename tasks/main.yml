@@ -1,11 +1,17 @@
 ---
-# tasks file for ansible-clamav
+# Tasks file for ansible-clamav
 
 - name: "Include ubuntu tasks"
   include: "ubuntu.yml"
   static: "no"
   when:
-    - ansible_distribution == "Ubuntu"
+    - ansible_distribution_release == "xenial"
+
+- name: "Include ubuntu 14 tasks"
+  include: "ubuntu14.yml"
+  static: "no"
+  when:
+    - ansible_distribution_release == "trusty"
 
 - name: "Include RedHat/CentOS tasks"
   include: "redhat.yml"

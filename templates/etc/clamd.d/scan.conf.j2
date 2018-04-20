@@ -83,7 +83,12 @@ LogSyslog yes
 
 # Path to a local socket file the daemon will listen on.
 # Default: disabled (must be specified by a user)
+
+{% if CLAMAV_SOCKET_TYPE == 'file' %}
+LocalSocket /var/run/clamav/clamd.ctl
+{% else %}
 #LocalSocket /var/run/clamd.scan/clamd.sock
+{% endif %}
 
 # Sets the group ownership on the unix socket.
 # Default: disabled (the primary group of the user running clamd)
@@ -99,7 +104,11 @@ LogSyslog yes
 
 # TCP port address.
 # Default: no
-TCPSocket 3310
+{% if CLAMAV_SOCKET_TYPE == 'file' %}
+#TCPSocket 3310
+{% else %}
+TCPSocket {{ CLAMAV_TCP_PORT }}
+{% endif %}
 
 # TCP address.
 # By default we bind to INADDR_ANY, probably not wise.
@@ -107,7 +116,11 @@ TCPSocket 3310
 # from the outside world. This option can be specified multiple
 # times if you want to listen on multiple IPs. IPv6 is now supported.
 # Default: no
-TCPAddr 127.0.0.1
+{% if CLAMAV_SOCKET_TYPE == 'file' %}
+#TCPAddr 127.0.0.1
+{% else %}
+TCPAddr {{ CLAMAV_TCP_ADDR }}
+{% endif %}
 
 # Maximum length the queue of pending connections may grow to.
 # Default: 200
