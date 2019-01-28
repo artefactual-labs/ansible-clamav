@@ -10,6 +10,7 @@
     state: "latest"
   with_items: 
     - "git"
+    - "libsemanage-python"
 
 - name: "Install required packages (RedHat)"
   yum:
