@@ -3,6 +3,7 @@
   yum:
     name: "epel-release"
     state: "latest"
+  when: install_rpm_repositories|bool
 
 - name: "Install packages required by role (RedHat)"
   yum:
