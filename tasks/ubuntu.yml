@@ -2,10 +2,8 @@
 
 - name: "Install packages required by role (Ubuntu)"
   apt:
-    name: "{{ item }}"
+    name: "git"
     state: "latest"
-  with_items: 
-    - "git"
 
 - name: "Check if clamav-daemon package was installed"
   shell: dpkg-query -s clamav-daemon | grep -Eq "install ok installed"
@@ -71,11 +69,8 @@
 
 - name: "Install clamav packages (Ubuntu)"
   apt:
-    name: "{{ item }}"
+    name: [ 'clamav', 'clamav-daemon' ]
     state: "latest"
-  with_items: 
-    - "clamav"
-    - "clamav-daemon"
 
 - name: "Configure clamav MaxFileSize"
   lineinfile:
