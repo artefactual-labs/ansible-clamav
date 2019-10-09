@@ -7,27 +7,15 @@
 
 - name: "Install packages required by role (RedHat)"
   yum:
-    name: "{{ item }}"
+    name: [ 'git', 'libsemanage-python' ]
     state: "latest"
-  with_items: 
-    - "git"
-    - "libsemanage-python"
 
 - name: "Install required packages (RedHat)"
   yum:
-    name: "{{ item }}"
+    name: ['clamav', 'clamav-data', 'clamav-devel', 'clamav-filesystem',
+           'clamav-lib', 'clamav-server', 'clamav-scanner', 'clamav-update',
+           'clamav-scanner-systemd', 'clamav-server-systemd']
     state: "latest"
-  with_items:
-    - "clamav"
-    - "clamav-data"
-    - "clamav-devel"
-    - "clamav-filesystem"
-    - "clamav-lib"
-    - "clamav-server"
-    - "clamav-scanner"
-    - "clamav-update"
-    - "clamav-scanner-systemd"
-    - "clamav-server-systemd"
 
 # If CLAMAV_SOCKET_TYPE is not defined, use tcp option
 - set_fact:
