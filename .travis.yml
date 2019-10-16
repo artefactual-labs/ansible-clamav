@@ -11,7 +11,7 @@ env:
   - distribution: ubuntu
     version: xenial
   - distribution: ubuntu
-    version: trusty
+    version: bionic
 
 services:
   - docker
