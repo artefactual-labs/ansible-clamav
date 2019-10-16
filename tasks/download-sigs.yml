@@ -38,43 +38,42 @@
                                ( clamf2.stat.exists or clamf2a.stat.exists ) and
                                ( clamf3.stat.exists or clamf3a.stat.exists ) ) }}"
 
-- debug:
-    msg: "Need to download clamav signatures"
-  when: clamav_download
+- name: "Download clamav signatures"
+  block:
+    - debug:
+      msg: "Need to download clamav signatures"
 
-- name: "Get clamav signatures from artefactual-labs repo"
-  git:
-    repo: "https://github.com/artefactual-labs/clamav-files.git"
-    dest: "/tmp/clamav-files"
-  when: clamav_download
+    - name: "Get clamav signatures from artefactual-labs repo"
+      git:
+        repo: "https://github.com/artefactual-labs/clamav-files.git"
+        dest: "/tmp/clamav-files"
 
-- name: "Copy clamav signatures to /var/lib/clamav"
-  command: "cp /tmp/clamav-files/{{ item }} /var/lib/clamav/"
-  become: yes
-  with_items:
-    - "bytecode.cvd"
-    - "daily.cvd"
-    - "main.cvd"
-  when: clamav_download
+    - name: "Copy clamav signatures to /var/lib/clamav"
+      command: "cp /tmp/clamav-files/{{ item }} /var/lib/clamav/"
+      become: yes
+      with_items:
+        - "bytecode.cvd"
+        - "daily.cvd"
+        - "main.cvd"
 
-- name: "Set user ownership for clamav files (Ubuntu)"
-  file:
-    path: "/var/lib/clamav"
-    owner: "clamav"
-    group: "clamav"
-    state: "directory"
-    recurse: "yes"
-  when: 
-    - clamav_download
+    - name: "Set user ownership for clamav files (Ubuntu)"
+      file:
+        path: "/var/lib/clamav"
+        owner: "clamav"
+        group: "clamav"
+        state: "directory"
+        recurse: "yes"
+      when: 
     - ansible_distribution == 'Ubuntu'
 
-- name: "Set user ownership for clamav files (RedHat)"
-  file:
-    path: "/var/lib/clamav"
-    owner: "clamupdate"
-    group: "clamupdate"
-    state: "directory"
-    recurse: "yes"
+    - name: "Set user ownership for clamav files (RedHat)"
+      file:
+        path: "/var/lib/clamav"
+        owner: "clamupdate"
+        group: "clamupdate"
+        state: "directory"
+        recurse: "yes"
+      when: 
+        - ansible_os_family == 'RedHat'
   when: 
-    - clamav_download
-    - ansible_os_family == 'RedHat'
+    - clamav_download|bool
