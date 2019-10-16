@@ -40,9 +40,6 @@
 
 - name: "Download clamav signatures"
   block:
-    - debug:
-      msg: "Need to download clamav signatures"
-
     - name: "Get clamav signatures from artefactual-labs repo"
       git:
         repo: "https://github.com/artefactual-labs/clamav-files.git"
@@ -64,7 +61,7 @@
         state: "directory"
         recurse: "yes"
       when: 
-    - ansible_distribution == 'Ubuntu'
+        - ansible_distribution == 'Ubuntu'
 
     - name: "Set user ownership for clamav files (RedHat)"
       file:
