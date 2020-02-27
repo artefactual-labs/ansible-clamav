@@ -13,8 +13,7 @@
 - name: "Install required packages (RedHat)"
   yum:
     name: ['clamav', 'clamav-data', 'clamav-devel', 'clamav-filesystem',
-           'clamav-lib', 'clamav-server', 'clamav-scanner', 'clamav-update',
-           'clamav-scanner-systemd', 'clamav-server-systemd']
+           'clamav-lib', 'clamd', 'clamav-update' ]
     state: "latest"
 
 # If CLAMAV_SOCKET_TYPE is not defined, use tcp option
