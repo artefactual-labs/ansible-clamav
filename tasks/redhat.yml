@@ -7,7 +7,7 @@
 
 - name: "Install packages required by role (RedHat)"
   yum:
-    name: [ 'git', 'libsemanage-python' ]
+    name: [ 'git', 'python3-libsemanage' ]
     state: "latest"
 
 - name: "Install required packages (RedHat)"
