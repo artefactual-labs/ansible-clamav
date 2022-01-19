@@ -16,7 +16,4 @@
     seconds: 10
 
 - name: "check clamdscan is working"
-  command: "clamdscan /bin/sh"
-
-
-
+  command: "clamdscan -p 30:1"
