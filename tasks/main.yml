@@ -3,8 +3,9 @@
 
 - name: "Include ubuntu tasks"
   include_tasks: "ubuntu.yml"
-  when: ( ansible_distribution_release == "xenial" ) or
-        ( ansible_distribution_release == "bionic" )
+  when:
+    - ansible_os_family == "Debian"
+    - ansible_distribution_version is version_compare('16.04', '>=')
 
 - name: "Include RedHat/CentOS tasks"
   include_tasks: "redhat.yml"
