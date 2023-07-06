@@ -71,6 +71,6 @@
         state: "directory"
         recurse: "yes"
       when: 
-        - ansible_os_family == 'RedHat'
+        - ansible_os_family in ['RedHat','Rocky']
   when: 
     - clamav_download|bool

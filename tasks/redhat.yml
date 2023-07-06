@@ -9,6 +9,15 @@
   yum:
     name: [ 'git', 'libsemanage-python' ]
     state: "latest"
+  when:
+    - ansible_distribution_major_version|int <= 7
+
+- name: "Install packages required by role (RedHat)"
+  yum:
+    name: [ 'git', 'python3-libsemanage' ]
+    state: "latest"
+  when:
+    - ansible_distribution_major_version|int > 7
 
 - name: "Install required packages (RedHat)"
   yum:
