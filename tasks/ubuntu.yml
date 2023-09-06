@@ -8,9 +8,9 @@
 - name: "Check if clamav-daemon package was installed"
   shell: dpkg-query -s clamav-daemon | grep -Eq "install ok installed"
   register: dpkg_check_clamav_daemon
-  check_mode: no
-  ignore_errors: yes
-  changed_when: no
+  failed_when: false
+  changed_when: false
+  check_mode: false
 
 # If CLAMAV_SOCKET_TYPE is not defined, use file option
 - set_fact:
@@ -28,9 +28,9 @@
    - name: "Check if clamav was installed with file or tcp socket"
      command: grep -Eq "^LocalSocket\ " /etc/clamav/clamd.conf
      register: clamavunixsocket
-     check_mode: no
-     ignore_errors: yes
-     changed_when: no
+     failed_when: false
+     changed_when: false
+     check_mode: false
 
    - set_fact:
        clamav_uses_file_socket: true
