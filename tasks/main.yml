@@ -7,10 +7,10 @@
     - ansible_os_family == "Debian"
     - ansible_distribution_version is version_compare('16.04', '>=')
 
-- name: "Include RedHat/CentOS tasks"
+- name: "Include RedHat/CentOS/Rocky tasks"
   include_tasks: "redhat.yml"
   when:
-    - ansible_os_family == "RedHat"
+    - ansible_os_family in ['RedHat','Rocky']
 
 - name: "Pause, give some time for service to get up"
   pause:
