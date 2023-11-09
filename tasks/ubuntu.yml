@@ -91,7 +91,7 @@
      line: "MaxScanSize {{ CLAMAV_MAX_SCAN_SIZE }}"
 
 - name: "Include download-sigs.yml"
-  include: "download-sigs.yml"
+  include_tasks: "download-sigs.yml"
 
 - name: "Enable services"
   service:
