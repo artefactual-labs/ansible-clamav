@@ -2,10 +2,9 @@
 - name: "Enable epel repository"
   yum:
     name: "epel-release"
-    state: "latest"
   when:
     - ansible_distribution not in ['RedHat']
-    - install_rpm_repositories|bool
+    - clamav_configure_rpm_repositories|bool
 
 - name: "Add epel-release repository (RHEL)"
   yum:
@@ -13,27 +12,31 @@
     state: "present"
   when:
     - ansible_distribution == 'RedHat'
-    - install_rpm_repositories|bool
+    - clamav_configure_rpm_repositories|bool
 
 - name: "Install packages required by role (RedHat)"
   yum:
     name: [ 'git', 'libsemanage-python' ]
-    state: "latest"
   when:
     - ansible_distribution_major_version|int <= 7
 
 - name: "Install packages required by role (RedHat)"
   yum:
     name: [ 'git', 'python3-libsemanage' ]
-    state: "latest"
   when:
     - ansible_distribution_major_version|int > 7
 
 - name: "Install required packages (RedHat)"
   yum:
-    name: ['clamav', 'clamav-data', 'clamav-devel', 'clamav-filesystem',
-           'clamav-lib', 'clamd', 'clamav-update' ]
-    state: "latest"
+    name: 
+      - clamav
+      - clamav-data
+      - clamav-devel
+      - clamav-filesystem
+      - clamav-lib
+      - clamd
+      - clamav-update
+    enablerepo: epel
 
 # If CLAMAV_SOCKET_TYPE is not defined, use tcp option
 - set_fact:

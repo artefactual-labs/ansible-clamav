@@ -18,4 +18,4 @@ CLAMAV_TCP_PORT: "3310"
 CLAMAV_TCP_ADDR: "127.0.0.1"
 
 # Install repositories
-install_rpm_repositories: "true"
+clamav_configure_rpm_repositories: "true"
