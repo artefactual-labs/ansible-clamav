@@ -17,5 +17,9 @@ CLAMAV_MAX_STREAM_LENGTH: "2000M"
 CLAMAV_TCP_PORT: "3310"
 CLAMAV_TCP_ADDR: "127.0.0.1"
 
+# Ubuntu clamav-daemon >= 1.5 added new commands. By default it is not enabling
+# the version command and AM fails when getting the version
+CLAMAV_ENABLE_VERSION_COMMAND: "true"
+
 # Install repositories
 install_rpm_repositories: "true"
