@@ -90,6 +90,13 @@
      regexp: "^MaxScanSize "
      line: "MaxScanSize {{ CLAMAV_MAX_SCAN_SIZE }}"
 
+# Needed in clamav-daemon >= 1.5 for AM
+- name: "Configure clamav EnableVersionCommand"
+  lineinfile:
+     path: "/etc/clamav/clamd.conf"
+     regexp: "^EnableVersionCommand "
+     line: "EnableVersionCommand {{ CLAMAV_ENABLE_VERSION_COMMAND }}"
+
 - name: "Include download-sigs.yml"
   include_tasks: "download-sigs.yml"
 
